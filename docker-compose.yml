@@ -1,5 +1,5 @@
 version: '3'
 services:
-  scheduler:
-    build: .
-    image: gesture-project-aws
+    scheduler:
+        build: .
+        image: gestureproject-dataprocessor
