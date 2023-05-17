@@ -25,6 +25,9 @@ func main() {
 			"timestamp": timestamp,
 			"x":         logEntry.X,
 			"y":         logEntry.Y,
+			"width":     logEntry.Width,
+			"height":    logEntry.Height,
+			"gesture":   logEntry.Gesture,
 		}
 
 		sendMessage(ch, pinCode, message)

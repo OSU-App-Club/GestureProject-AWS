@@ -6,6 +6,23 @@ Run Go program
 go run .
 ```
 
+# AWS Copilot CLI
+- For easy setup of ECS Fargate cluster + VPC & other stuff
+- https://aws.github.io/copilot-cli
+```bash
+copilot init
+- name app as gesture-project
+- choose background service
+- name service as data-processor
+- select yes to create test environment
+
+copilot app ls
+
+copilot svc deploy
+
+copilot svc logs --follow --since 1h
+```
+
 # Docker
 
 Build

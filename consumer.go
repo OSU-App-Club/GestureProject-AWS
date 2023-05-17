@@ -14,9 +14,12 @@ import (
 
 // layout of the printed message:
 type LogEntry struct {
-	Key string `json:"key"`
-	X   int    `json:"x"`
-	Y   int    `json:"y"`
+	Key     string `json:"key"`
+	X       int    `json:"x"`
+	Y       int    `json:"y"`
+	Width   int    `json:"width"`
+	Height  int    `json:"height"`
+	Gesture string `json:"gesture"`
 }
 
 func createConsumer() *kafka.Reader {
@@ -59,6 +62,8 @@ func readMessages(consumer *kafka.Reader, processMsg func(LogEntry)) {
 			continue
 		}
 
+		log.Info("Hi")
+
 		// check if msg.Time is within the last 5 seconds
 		if time.Since(msg.Time) > 5*time.Second {
 			log.Warning("Message is too old, skipping...")
@@ -73,8 +78,8 @@ func readMessages(consumer *kafka.Reader, processMsg func(LogEntry)) {
 		}
 		logEntry.Key = string(msg.Key)
 
-		// log.Info("the raw output:")
-		// log.Printf("%+v\n", string(msg.Value))
+		log.Info("the raw output:")
+		log.Infof("%+v\n", string(msg.Value))
 		// log.Info("rcvd:", string(msg.Value))
 		// log.Info("logEntry:", logEntry)
 
