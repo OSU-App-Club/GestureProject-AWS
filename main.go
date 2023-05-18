@@ -10,9 +10,11 @@ func main() {
 	log.Info("Started...")
 
 	ch := createChannel()
-	// sendMessage(ch)
+	defer ch.Close()
 
 	consumer := createConsumer()
+	defer consumer.Close()
+
 	readMessages(consumer, func(logEntry LogEntry) {
 		log.Info("Processing message...")
 		log.Info(logEntry)
@@ -23,13 +25,10 @@ func main() {
 		timestamp := time.Now().Format("2006-01-02 15:04:05.999-07:00")
 		message := map[string]interface{}{
 			"timestamp": timestamp,
-			"x":         logEntry.X,
-			"y":         logEntry.Y,
-			"width":     logEntry.Width,
-			"height":    logEntry.Height,
-			"gesture":   logEntry.Gesture,
+			"value":     logEntry.Value,
 		}
 
 		sendMessage(ch, pinCode, message)
 	})
+
 }

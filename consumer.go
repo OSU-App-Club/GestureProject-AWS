@@ -1,87 +1,69 @@
 package main
 
-// Task: Write HTTP request code to pull latest message from Kafka topic "Gestures"
-// Reference: Consume Messages - Kafka API: https://docs.upstash.com/kafka/kafkaapi
 import (
-	"context"
-	"crypto/tls"
-	"encoding/json"
+	"fmt"
 	"time"
 
-	"github.com/segmentio/kafka-go"
-	"github.com/segmentio/kafka-go/sasl/scram"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+)
+
+const (
+	bootstrapServers = "pkc-rgm37.us-west-2.aws.confluent.cloud:9092"
+	APIKey           = "44TSILYQLLH3SNPX"
+	APISecret        = "9g7KBW0emCSUXjb5Fa069DPqGrrTHhOf5UY78oZlZmLns1lLbAvnlQdBnu6rle/Y"
 )
 
 // layout of the printed message:
 type LogEntry struct {
-	Key     string `json:"key"`
-	X       int    `json:"x"`
-	Y       int    `json:"y"`
-	Width   int    `json:"width"`
-	Height  int    `json:"height"`
-	Gesture string `json:"gesture"`
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
-func createConsumer() *kafka.Reader {
-	// New main from documentation:
-	mechanism, err := scram.Mechanism(scram.SHA256,
-		"d2lubmluZy1jaGlwbXVuay0xMzI4NiRu6Cm3A9Mo_Q6mThRD_7s0zqgOo3T7pIE", "9f10c92e53ff4e96baafdadbc2c9c6fe")
+func createConsumer() *kafka.Consumer {
+	// Now consumes the record and print its value...
+	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
+		"bootstrap.servers":  bootstrapServers,
+		"sasl.mechanisms":    "PLAIN",
+		"security.protocol":  "SASL_SSL",
+		"sasl.username":      APIKey,
+		"sasl.password":      APISecret,
+		"session.timeout.ms": 6000,
+		"group.id":           "my-group",
+		"auto.offset.reset":  "latest"})
+
 	if err != nil {
-		log.Fatalf("Error: ", err)
+		panic(fmt.Sprintf("Failed to create consumer: %s", err))
 	}
 
-	dialer := &kafka.Dialer{
-		SASLMechanism: mechanism,
-		TLS:           &tls.Config{},
-	}
-
-	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"winning-chipmunk-13286-us1-kafka.upstash.io:9092"},
-		//   GroupID: "myGroupId",
-		Topic:       "Gestures",
-		StartOffset: kafka.LastOffset,
-		Dialer:      dialer,
-	})
+	topic := "Gestures"
+	topics := []string{topic}
+	consumer.SubscribeTopics(topics, nil)
 	// defer consumer.Close()
 
 	return consumer
 }
 
-func readMessages(consumer *kafka.Reader, processMsg func(LogEntry)) {
+func readMessages(consumer *kafka.Consumer, processMsg func(LogEntry)) {
 	for {
 		log.Info("Waiting for message...")
 
-		// ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
-		// defer cancel()
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-
-		msg, err := consumer.ReadMessage(ctx)
+		message, err := consumer.ReadMessage(-1)
 		if err != nil {
 			log.Error("Error:", err)
 			continue
 		}
 
-		log.Info("Hi")
-
-		// check if msg.Time is within the last 5 seconds
-		if time.Since(msg.Time) > 5*time.Second {
+		// check if message.Time is within the last 5 seconds
+		if time.Since(message.Timestamp) > 5*time.Second {
 			log.Warning("Message is too old, skipping...")
 			continue
 		}
 
 		var logEntry LogEntry
-		err_ := json.Unmarshal(msg.Value, &logEntry)
-		if err_ != nil {
-			log.Error("Error parsing log entry:", err_)
-			continue
-		}
-		logEntry.Key = string(msg.Key)
+		logEntry.Key = string(message.Key)
+		logEntry.Value = string(message.Value)
 
-		log.Info("the raw output:")
-		log.Infof("%+v\n", string(msg.Value))
-		// log.Info("rcvd:", string(msg.Value))
-		// log.Info("logEntry:", logEntry)
+		// log.Infof("Message received: %s", string(message.Value))
 
 		processMsg(logEntry)
 	}
