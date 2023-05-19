@@ -22,14 +22,13 @@ type LogEntry struct {
 func createConsumer() *kafka.Consumer {
 	// Now consumes the record and print its value...
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers":  bootstrapServers,
-		"sasl.mechanisms":    "PLAIN",
-		"security.protocol":  "SASL_SSL",
-		"sasl.username":      APIKey,
-		"sasl.password":      APISecret,
-		"session.timeout.ms": 6000,
-		"group.id":           "my-group",
-		"auto.offset.reset":  "latest"})
+		"bootstrap.servers": bootstrapServers,
+		"sasl.mechanisms":   "PLAIN",
+		"security.protocol": "SASL_SSL",
+		"sasl.username":     APIKey,
+		"sasl.password":     APISecret,
+		"group.id":          "my-group",
+		"auto.offset.reset": "latest"})
 
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create consumer: %s", err))
