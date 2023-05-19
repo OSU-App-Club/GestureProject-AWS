@@ -16,7 +16,9 @@ COPY . .
 RUN go build -o /main ./*.go
 
 ## Deploy
-FROM gcr.io/distroless/base-debian10
+# need a Docker image that will resolve error:  /lib/x86_64-linux-gnu/libm.so.6: version `GLIBC_2.29' not found (required by /main)
+# like the golang image
+FROM golang:1.20.0
 
 WORKDIR /
 
