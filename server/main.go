@@ -20,15 +20,15 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"time"
 
+	pb "GestureProjectAws/message"
+
 	"google.golang.org/grpc"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
 var (
@@ -41,7 +41,7 @@ type server struct {
 }
 
 // SayHello implements helloworld.GreeterServer
-func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest, stream pb.Greeter_SayHelloServer) error {
+func (s *server) SayHello(in *pb.HelloRequest, stream pb.Greeter_SayHelloServer) error {
 	log.Printf("New client connected: %v", in.GetName())
 	// return &pb.HelloReply{Key: "Hello " + in.GetName(), Value: "My value"}, nil
 

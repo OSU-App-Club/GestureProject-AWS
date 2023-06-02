@@ -22,12 +22,14 @@ package main
 import (
 	"context"
 	"flag"
+	"io"
 	"log"
 	"time"
 
+	pb "GestureProjectAws/message"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
 const (
@@ -50,19 +52,19 @@ func main() {
 	c := pb.NewGreeterClient(conn)
 
 	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second * 100)
 	defer cancel()
 	stream, err := c.SayHello(ctx, &pb.HelloRequest{Name: *name})
-	// if err != nil {
-	// 	log.Fatalf("could not greet: %v", err)
-	// }
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
 	for {
 		data, err := stream.Recv()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			log.Errorf("Failed to receive a message from server: %v", err)
+			log.Printf("Failed to receive a message from server: %v", err)
 		}
 		if data == nil {
 			continue

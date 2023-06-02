@@ -8,6 +8,33 @@ go mod tidy
 go run .
 ```
 
+# gRPC
+
+Install protoc
+```bash
+sudo apt-get update
+sudo apt-get install -y protobuf-compiler
+sudo go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+sudo go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+```
+
+Generate message .go files from .proto file
+```bash
+protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    message/message.proto
+```
+
+Run server
+```bash
+go run server/main.go
+```
+
+Run client
+```bash
+go run client/main.go
+```
+
 # AWS Copilot CLI
 
 -   For easy setup of ECS Fargate cluster + VPC & other stuff
