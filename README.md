@@ -11,6 +11,7 @@ go run .
 # gRPC
 
 Install protoc
+
 ```bash
 sudo apt-get update
 sudo apt-get install -y protobuf-compiler
@@ -18,7 +19,8 @@ sudo go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 sudo go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 ```
 
-Generate message .go files from .proto file
+Generate message .go files from .proto file within client and server directories
+
 ```bash
 protoc --go_out=. --go_opt=paths=source_relative \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
@@ -26,13 +28,17 @@ protoc --go_out=. --go_opt=paths=source_relative \
 ```
 
 Run server
+
 ```bash
-go run server/main.go
+cd server
+go run .
 ```
 
 Run client
+
 ```bash
-go run client/main.go
+cd client
+go run .
 ```
 
 # AWS Copilot CLI
@@ -59,13 +65,16 @@ copilot svc logs --follow --since 1h
 Build
 
 ```bash
-docker build -t gestureproject-dataprocessor .
+sudo docker build -t gesture-project-aws-grpc-client .
+
+sudo docker build -t gesture-project-aws-grpc-server .
 ```
 
 OR Compose
 
 ```bash
-docker compose up --build
+sudo docker compose up --build
+sudo docker compose up -d
 ```
 
 Push to ECR

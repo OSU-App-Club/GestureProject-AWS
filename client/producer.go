@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"strings"
 
 	"github.com/streadway/amqp"
@@ -56,17 +55,11 @@ func createChannel() *amqp.Channel {
 	return ch
 }
 
-func sendMessage(ch *amqp.Channel, pinCode string, message map[string]interface{}) error {
-	body, err := json.Marshal(message)
-	if err != nil {
-		log.Error("Failed to marshal message:", err)
-		return err
-	}
-
+func sendMessage(ch *amqp.Channel, pinCode string, message string) error {
 	// Create a message properties object with the desired headers and properties
 	properties := amqp.Publishing{
 		ContentType:  "text/plain",
-		Body:         body,
+		Body:         []byte(message),
 		DeliveryMode: 2,
 	}
 
@@ -75,7 +68,7 @@ func sendMessage(ch *amqp.Channel, pinCode string, message map[string]interface{
 
 	// Publish the message to the exchange with the desired routing key
 	const mandatory = true
-	err = ch.Publish(
+	err := ch.Publish(
 		exchangeName, // exchange name
 		routingKey,   // routing key
 		mandatory,    // mandatory
@@ -87,6 +80,6 @@ func sendMessage(ch *amqp.Channel, pinCode string, message map[string]interface{
 		return err
 	}
 
-	log.Info("Sent message:", string(body))
+	log.Info("Sent message:", message)
 	return nil
 }

@@ -1,5 +1,8 @@
 version: '3'
 services:
-    scheduler:
-        build: .
-        image: gestureproject-dataprocessor
+    server:
+        build: ./server
+        image: gesture-project-aws-grpc-server
+    client:
+        build: ./client
+        image: gesture-project-aws-grpc-client

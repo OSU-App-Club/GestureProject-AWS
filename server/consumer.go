@@ -27,7 +27,7 @@ func createConsumer() *kafka.Consumer {
 		"security.protocol": "SASL_SSL",
 		"sasl.username":     APIKey,
 		"sasl.password":     APISecret,
-		"group.id":          "my-group",
+		"group.id":          "my-groupd",
 		"auto.offset.reset": "latest"})
 
 	if err != nil {
