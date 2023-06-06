@@ -86,8 +86,8 @@ func listenForKafkaMessages() {
 		defer consumer.Close()
 
 		readMessages(consumer, func(logEntry LogEntry) {
-			log.Info("Processing message...")
-			log.Info(logEntry)
+			// log.Info("Processing message...")
+			// log.Info(logEntry)
 
 			pinCode := logEntry.Key
 
@@ -112,7 +112,7 @@ func listenForKafkaMessages() {
 
 			// handle the message
 			input <- data
-			log.Info("Message sent to clients.")
+			// log.Info("Message sent to clients.")
 
 		})
 	}()

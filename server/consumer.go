@@ -44,7 +44,7 @@ func createConsumer() *kafka.Consumer {
 
 func readMessages(consumer *kafka.Consumer, processMsg func(LogEntry)) {
 	for {
-		log.Info("Waiting for message...")
+		// log.Info("Waiting for message...")
 
 		message, err := consumer.ReadMessage(-1)
 		if err != nil {
@@ -54,7 +54,7 @@ func readMessages(consumer *kafka.Consumer, processMsg func(LogEntry)) {
 
 		// check if message.Time is within the last 5 seconds
 		if time.Since(message.Timestamp) > 5*time.Second {
-			log.Warning("Message is too old, skipping...")
+			// log.Warning("Message is too old, skipping...")
 			continue
 		}
 

@@ -80,6 +80,6 @@ func sendMessage(ch *amqp.Channel, pinCode string, message string) error {
 		return err
 	}
 
-	log.Info("Sent message:", message)
+	// log.Info("Sent message:", message)
 	return nil
 }
