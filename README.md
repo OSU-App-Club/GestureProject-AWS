@@ -61,8 +61,8 @@ copilot svc deploy --name server
 copilot svc deploy --name client
 
 
-copilot svc logs --follow --since 10m --name server
-copilot svc logs --follow --since 10m --name client
+copilot svc logs --follow --since 30m --name server
+copilot svc logs --follow --since 30m --name client
 ```
 
 # Docker
