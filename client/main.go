@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"io"
+	"os"
 	"time"
 
 	pb "gesture-project-aws-grpc-client/message"
@@ -17,7 +18,6 @@ const (
 )
 
 var (
-	addr = flag.String("addr", "192.168.0.6:50051", "the address to connect to")
 	name = flag.String("name", defaultName, "Name to greet")
 )
 
@@ -28,14 +28,19 @@ func main() {
 
 	flag.Parse()
 
+	addr := os.Getenv("GRPC_SERVER_ADDRESS")
+	if addr == "" {
+		addr = "localhost:50051" // Default address if environment variable is not set
+	}
+
 	ch := createChannel()
 	defer ch.Close()
 
 	for {
-		log.Infof("Attempting to connect to [%s] with name [%s]", *addr, *name)
+		log.Infof("Attempting to connect to [%s] with name [%s]", addr, *name)
 
 		// Set up a connection to the server.
-		conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Errorf("did not connect: %v", err)
 		} else {
@@ -50,7 +55,7 @@ func main() {
 			if err != nil {
 				log.Errorf("could not greet: %v", err)
 			} else {
-				log.Infof("Connected to [%s] with name [%s]", *addr, *name)
+				log.Infof("Connected to [%s] with name [%s]", addr, *name)
 
 				counter := 0
 				for {

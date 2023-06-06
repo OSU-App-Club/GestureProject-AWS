@@ -3,6 +3,15 @@ services:
     server:
         build: ./server
         image: gesture-project-aws-grpc-server
+        networks:
+            - grpc-network
     client:
         build: ./client
         image: gesture-project-aws-grpc-client
+        networks:
+            - grpc-network
+        environment:
+            - GRPC_SERVER_ADDRESS=server:50051
+networks:
+    grpc-network:
+        name: grpc-network
